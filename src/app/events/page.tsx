@@ -55,7 +55,7 @@ export default function EventsPage() {
       <nav className="navbar">
         <Link href="/" className="navbar-brand">
           <span className="navbar-brand-icon">🎫</span>
-          TiketRantai
+          SolTix
         </Link>
         <div className="navbar-links">
           <Link href="/my-tickets" className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
@@ -229,7 +229,7 @@ export default function EventsPage() {
 
       <footer className="footer">
         <p>
-          TiketRantai — cNFT Concert Ticketing · Solana Devnet<br />
+          SolTix — cNFT Concert Ticketing · Solana Devnet<br />
           Lutfi Braja Munirozaman · G.211.23.0008
         </p>
       </footer>

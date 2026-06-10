@@ -83,7 +83,7 @@ export default function VerifyPage() {
       <nav className="navbar">
         <Link href="/" className="navbar-brand">
           <span className="navbar-brand-icon">🎫</span>
-          TiketRantai
+          SolTix
         </Link>
         <div>
           <Link href="/dashboard" className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
@@ -252,7 +252,7 @@ export default function VerifyPage() {
       </main>
 
       <footer className="footer">
-        <p>TiketRantai — Mode Panitia · Hanya untuk staff venue</p>
+        <p>SolTix — Mode Panitia · Hanya untuk staff venue</p>
       </footer>
     </>
   );

@@ -80,7 +80,7 @@ export default function DashboardPage() {
       <nav className="navbar">
         <Link href="/" className="navbar-brand">
           <span className="navbar-brand-icon">🎫</span>
-          TiketRantai
+          SolTix
         </Link>
         <div className="navbar-links">
           <Link href="/verify" className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>

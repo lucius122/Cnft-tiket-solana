@@ -199,7 +199,7 @@ export default function EventDetailPage() {
       <nav className="navbar">
         <Link href="/" className="navbar-brand">
           <span className="navbar-brand-icon">🎫</span>
-          TiketRantai
+          SolTix
         </Link>
         <div className="navbar-links">
           <Link href="/events" style={{ color: "var(--text-secondary)", fontSize: "0.875rem", textDecoration: "none" }}>
@@ -406,7 +406,7 @@ export default function EventDetailPage() {
       </main>
 
       <footer className="footer">
-        <p>TiketRantai — cNFT Concert Ticketing · Solana Devnet</p>
+        <p>SolTix — cNFT Concert Ticketing · Solana Devnet</p>
       </footer>
     </>
   );

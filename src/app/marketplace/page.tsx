@@ -209,7 +209,7 @@ export default function MarketplacePage() {
       <nav className="navbar">
         <Link href="/" className="navbar-brand">
           <span className="navbar-brand-icon">🎫</span>
-          TiketRantai
+          SolTix
         </Link>
         <div className="navbar-links">
           <Link
@@ -695,7 +695,7 @@ export default function MarketplacePage() {
       )}
 
       <footer className="footer">
-        <p>TiketRantai — cNFT Concert Ticketing · Solana Devnet</p>
+        <p>SolTix — cNFT Concert Ticketing · Solana Devnet</p>
       </footer>
     </>
   );

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TiketRantai — Tiket Konser cNFT Anti-Calo di Solana",
+  title: "SolTix — Tiket Konser cNFT Anti-Calo di Solana",
   description:
     "Sistem e-ticketing konser berbasis Compressed NFT (cNFT) di Solana. Transparan, aman, tidak bisa dipalsukan. Anti-calo dengan verifikasi NIK.",
   keywords: ["tiket konser", "NFT", "Solana", "blockchain", "anti-calo", "cNFT"],

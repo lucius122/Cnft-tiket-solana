@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Landing Page — Halaman utama TiketRantai
+ * Landing Page — Halaman utama SolTix
  *
  * Menampilkan:
  * 1. Navbar dengan branding + wallet button + nav links
@@ -21,7 +21,7 @@ export default function HomePage() {
       <nav className="navbar">
         <Link href="/" className="navbar-brand">
           <span className="navbar-brand-icon">🎫</span>
-          TiketRantai
+          SolTix
         </Link>
         <div className="navbar-links">
           <div className="navbar-links-nav">
@@ -235,7 +235,7 @@ export default function HomePage() {
       {/* FOOTER */}
       <footer className="footer">
         <p>
-          TiketRantai — Sistem E-Ticketing Konser cNFT Anti-Calo
+          SolTix — Sistem E-Ticketing Konser cNFT Anti-Calo
           <br />
           Lutfi Braja Munirozaman · G.211.23.0008 · Teknik Komputer
           <br />

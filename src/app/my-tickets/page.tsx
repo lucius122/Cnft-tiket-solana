@@ -96,7 +96,7 @@ export default function MyTicketsPage() {
       <nav className="navbar">
         <Link href="/" className="navbar-brand">
           <span className="navbar-brand-icon">🎫</span>
-          TiketRantai
+          SolTix
         </Link>
         <div className="navbar-links">
           <Link href="/events" className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
@@ -399,7 +399,7 @@ export default function MyTicketsPage() {
       })()}
 
       <footer className="footer">
-        <p>TiketRantai — cNFT Concert Ticketing · Solana Devnet</p>
+        <p>SolTix — cNFT Concert Ticketing · Solana Devnet</p>
       </footer>
     </>
   );
