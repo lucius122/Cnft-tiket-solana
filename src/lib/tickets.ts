@@ -30,6 +30,10 @@ export interface Ticket {
   venue: string;
   eventDate: string;
   eventTime: string;
+  
+  // Fitur Marketplace Resale
+  isForSale?: boolean;
+  resalePrice?: number;
 }
 
 export async function getAllTickets(): Promise<Ticket[]> {
@@ -85,4 +89,37 @@ export function generateTicketNumber(eventId: string): string {
   const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
   const timestamp = Date.now().toString(36).slice(-4).toUpperCase();
   return `${code}-${rand}${timestamp}`;
+}
+
+export async function updateTicketListing(
+  ticketId: string,
+  isForSale: boolean,
+  resalePrice?: number
+): Promise<Ticket | null> {
+  const tickets = await getAllTickets();
+  const idx = tickets.findIndex((t) => t.id === ticketId);
+  if (idx === -1) return null;
+  
+  tickets[idx].isForSale = isForSale;
+  if (resalePrice !== undefined) {
+    tickets[idx].resalePrice = resalePrice;
+  }
+  
+  await kvSet("tickets", tickets);
+  return tickets[idx];
+}
+
+export async function updateTicketOwner(
+  ticketId: string,
+  newOwnerAddress: string
+): Promise<Ticket | null> {
+  const tickets = await getAllTickets();
+  const idx = tickets.findIndex((t) => t.id === ticketId);
+  if (idx === -1) return null;
+  
+  tickets[idx].walletAddress = newOwnerAddress;
+  tickets[idx].isForSale = false; // Batalkan listing setelah terjual
+  
+  await kvSet("tickets", tickets);
+  return tickets[idx];
 }

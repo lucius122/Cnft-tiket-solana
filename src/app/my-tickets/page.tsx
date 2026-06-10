@@ -19,6 +19,9 @@ export default function MyTicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [sellModalTicket, setSellModalTicket] = useState<Ticket | null>(null);
+  const [sellPrice, setSellPrice] = useState("");
+  const [selling, setSelling] = useState(false);
 
   useEffect(() => {
     if (!wallet.publicKey) { setTickets([]); return; }
@@ -35,6 +38,56 @@ export default function MyTicketsPage() {
     });
   }
 
+  async function handleSellTicket(e: React.FormEvent) {
+    e.preventDefault();
+    if (!sellModalTicket || !sellPrice) return;
+    setSelling(true);
+    try {
+      const price = parseInt(sellPrice.replace(/\D/g, ""), 10);
+      const res = await fetch("/api/marketplace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "list", ticketId: sellModalTicket.id, resalePrice: price }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Refresh tickets
+        const r = await fetch(`/api/tickets?wallet=${wallet.publicKey?.toBase58()}`);
+        const res2 = await r.json();
+        if (res2.success) setTickets(res2.data);
+        setSellModalTicket(null);
+        setSellPrice("");
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      alert("Error listing ticket");
+    } finally {
+      setSelling(false);
+    }
+  }
+
+  async function handleCancelSell(ticketId: string) {
+    try {
+      const res = await fetch("/api/marketplace", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "unlist", ticketId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Refresh tickets
+        const r = await fetch(`/api/tickets?wallet=${wallet.publicKey?.toBase58()}`);
+        const res2 = await r.json();
+        if (res2.success) setTickets(res2.data);
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      alert("Error unlisting ticket");
+    }
+  }
+
   const activeTickets = tickets.filter((t) => t.status === "active");
   const usedTickets = tickets.filter((t) => t.status === "redeemed");
 
@@ -48,6 +101,9 @@ export default function MyTicketsPage() {
         <div className="navbar-links">
           <Link href="/events" className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
             Events
+          </Link>
+          <Link href="/marketplace" className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
+            Marketplace
           </Link>
           <WalletButton />
         </div>
@@ -126,7 +182,13 @@ export default function MyTicketsPage() {
                 </h2>
                 <div className="tickets-grid" style={{ marginBottom: "2rem" }}>
                   {activeTickets.map((ticket) => (
-                    <TicketCard key={ticket.id} ticket={ticket} onShowQR={() => setSelectedTicket(ticket)} />
+                    <TicketCard 
+                      key={ticket.id} 
+                      ticket={ticket} 
+                      onShowQR={() => setSelectedTicket(ticket)}
+                      onSell={() => setSellModalTicket(ticket)}
+                      onCancelSell={() => handleCancelSell(ticket.id)}
+                    />
                   ))}
                 </div>
               </>
@@ -221,6 +283,69 @@ export default function MyTicketsPage() {
         </div>
       )}
 
+      {/* Sell Modal */}
+      {sellModalTicket && (
+        <div
+          onClick={() => setSellModalTicket(null)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 100,
+            background: "rgba(0,0,0,0.85)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: "1rem",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="card-glass"
+            style={{ maxWidth: 400, width: "100%", padding: "2rem" }}
+          >
+            <h2 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "0.5rem", textAlign: "center" }}>
+              Jual Tiket
+            </h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: "1.5rem", textAlign: "center", lineHeight: 1.5 }}>
+              Tiket <strong>{sellModalTicket.eventTitle}</strong> ({sellModalTicket.categoryName}) akan dilisting di Marketplace.
+            </p>
+
+            <form onSubmit={handleSellTicket}>
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "0.5rem" }}>Harga Jual (IDR)</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: 1500000"
+                  value={sellPrice}
+                  onChange={(e) => setSellPrice(e.target.value)}
+                  style={{
+                    width: "100%", padding: "0.75rem 1rem", borderRadius: 8,
+                    background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)",
+                    color: "white", outline: "none", fontSize: "1rem"
+                  }}
+                />
+              </div>
+              <div style={{ display: "flex", gap: "1rem" }}>
+                <button
+                  type="button"
+                  onClick={() => setSellModalTicket(null)}
+                  className="btn btn-secondary"
+                  style={{ flex: 1, justifyContent: "center" }}
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={selling || !sellPrice}
+                  className={`btn btn-accent ${selling ? "btn-loading" : ""}`}
+                  style={{ flex: 1, justifyContent: "center" }}
+                >
+                  {selling ? "Loading..." : "Listing Tiket"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <footer className="footer">
         <p>TiketRantai — cNFT Concert Ticketing · Solana Devnet</p>
       </footer>
@@ -229,10 +354,12 @@ export default function MyTicketsPage() {
 }
 
 function TicketCard({
-  ticket, onShowQR, dimmed = false,
+  ticket, onShowQR, onSell, onCancelSell, dimmed = false,
 }: {
   ticket: Ticket;
   onShowQR?: () => void;
+  onSell?: () => void;
+  onCancelSell?: () => void;
   dimmed?: boolean;
 }) {
   return (
@@ -269,27 +396,53 @@ function TicketCard({
         </p>
 
         {/* Status */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{
-            padding: "0.25rem 0.75rem",
-            borderRadius: 999,
-            fontSize: "0.72rem",
-            fontWeight: 700,
-            background: ticket.status === "active" ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.05)",
-            color: ticket.status === "active" ? "var(--success)" : "var(--text-muted)",
-          }}>
-            {ticket.status === "active" ? "✅ Aktif" : "⬜ Digunakan"}
-          </span>
-          {ticket.status === "active" && onShowQR && (
-            <button
-              id={`qr-btn-${ticket.id}`}
-              onClick={onShowQR}
-              className="btn btn-primary"
-              style={{ padding: "0.4rem 0.9rem", fontSize: "0.78rem" }}
-            >
-              📱 QR Code
-            </button>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.5rem" }}>
+          {ticket.isForSale ? (
+            <span style={{
+              padding: "0.25rem 0.75rem", borderRadius: 999, fontSize: "0.72rem", fontWeight: 700,
+              background: "rgba(234,179,8,0.15)", color: "var(--warning)",
+            }}>
+              🏷️ Dijual: {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(ticket.resalePrice || 0)}
+            </span>
+          ) : (
+            <span style={{
+              padding: "0.25rem 0.75rem", borderRadius: 999, fontSize: "0.72rem", fontWeight: 700,
+              background: ticket.status === "active" ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.05)",
+              color: ticket.status === "active" ? "var(--success)" : "var(--text-muted)",
+            }}>
+              {ticket.status === "active" ? "✅ Aktif" : "⬜ Digunakan"}
+            </span>
           )}
+
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            {ticket.status === "active" && !ticket.isForSale && onSell && (
+              <button
+                onClick={onSell}
+                className="btn btn-secondary"
+                style={{ padding: "0.4rem 0.8rem", fontSize: "0.75rem" }}
+              >
+                Jual
+              </button>
+            )}
+            {ticket.status === "active" && ticket.isForSale && onCancelSell && (
+              <button
+                onClick={onCancelSell}
+                className="btn btn-secondary"
+                style={{ padding: "0.4rem 0.8rem", fontSize: "0.75rem", color: "var(--error)", borderColor: "var(--error)" }}
+              >
+                Batal Jual
+              </button>
+            )}
+            {ticket.status === "active" && !ticket.isForSale && onShowQR && (
+              <button
+                onClick={onShowQR}
+                className="btn btn-primary"
+                style={{ padding: "0.4rem 0.9rem", fontSize: "0.75rem" }}
+              >
+                📱 QR Code
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

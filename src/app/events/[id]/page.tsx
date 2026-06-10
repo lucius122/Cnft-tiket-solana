@@ -81,28 +81,58 @@ export default function EventDetailPage() {
 
       const category = event.categories.find((c) => c.id === selectedCategory)!;
 
-      // STEP 1: Mint cNFT via Umi + Phantom
-      console.log("🎫 Minting cNFT tiket...");
-      // Nama cNFT dibatasi max 32 karakter oleh Bubblegum program
-      // Kita pakai format singkat: "TKT-{artist}-{category}" lalu potong jika perlu
+      // STEP 1: Mint cNFT via Umi + Phantom beserta Pembayaran SOL
+      console.log("🎫 Mulai memproses pembayaran dan pencetakan tiket...");
+      
       const shortName = `TKT-${event.artist}-${category.id}`.slice(0, 32);
+      
+      // Hitung harga dalam SOL (Asumsi 1 SOL = Rp 2.500.000)
+      const EXCHANGE_RATE = 2500000;
+      const priceInSol = category.price / EXCHANGE_RATE;
+      // Konversi SOL ke Lamports (1 SOL = 10^9 Lamports)
+      const priceLamports = Math.floor(priceInSol * 1_000_000_000);
+      
+      const adminWallet = process.env.NEXT_PUBLIC_ADMIN_WALLET || "H29eqrYPizjEThhpNEp7xMNGt3EoMXwQbLsU2xSTq3Jd";
 
-      const result = await mintV1(umi, {
-        leafOwner: publicKey(wallet.publicKey.toBase58()),
-        merkleTree: publicKey(treeAddress),
-        metadata: {
-          name: shortName,
-          symbol: "TIKET",
-          uri: `https://raw.githubusercontent.com/solana-developers/program-examples/main/tokens/tokens/compressed-nfts/uri.json`,
-          sellerFeeBasisPoints: 1000, // 10% royalti
-          collection: none<Collection>(),
-          creators: [{ address: umi.identity.publicKey, verified: false, share: 100 }],
-        },
-      }).sendAndConfirm(umi);
+      // Import transactionBuilder, sol, transferSol
+      const { transactionBuilder, sol } = await import("@metaplex-foundation/umi");
+      const { transferSol } = await import("@metaplex-foundation/mpl-toolbox");
+
+      let builder = transactionBuilder();
+
+      // 1. Tambahkan instruksi transfer SOL jika harga tiket > 0
+      if (priceLamports > 0) {
+        builder = builder.add(
+          transferSol(umi, {
+            source: umi.identity,
+            destination: publicKey(adminWallet),
+            amount: sol(priceInSol),
+          })
+        );
+      }
+
+      // 2. Tambahkan instruksi mint cNFT
+      builder = builder.add(
+        mintV1(umi, {
+          leafOwner: publicKey(wallet.publicKey.toBase58()),
+          merkleTree: publicKey(treeAddress),
+          metadata: {
+            name: shortName,
+            symbol: "TIKET",
+            uri: `https://raw.githubusercontent.com/solana-developers/program-examples/main/tokens/tokens/compressed-nfts/uri.json`,
+            sellerFeeBasisPoints: 1000, // 10% royalti
+            collection: none<Collection>(),
+            creators: [{ address: umi.identity.publicKey, verified: false, share: 100 }],
+          },
+        })
+      );
+
+      // Kirim transaksi gabungan
+      const result = await builder.sendAndConfirm(umi);
 
       const sig = bs58.encode(result.signature);
       setTxSignature(sig);
-      console.log("✅ cNFT berhasil di-mint! Signature:", sig.slice(0, 20) + "...");
+      console.log("✅ Pembayaran & Minting sukses! Signature:", sig.slice(0, 20) + "...");
 
       // STEP 2: Simpan record ke API
       setStep("saving");

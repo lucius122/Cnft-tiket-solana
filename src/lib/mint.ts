@@ -18,9 +18,10 @@
  */
 
 import { mintV1 } from "@metaplex-foundation/mpl-bubblegum";
-import { none, publicKey } from "@metaplex-foundation/umi";
+import { none, publicKey, transactionBuilder, sol } from "@metaplex-foundation/umi";
 import type { Option, Umi } from "@metaplex-foundation/umi";
 import type { Collection } from "@metaplex-foundation/mpl-bubblegum";
+import { transferSol } from "@metaplex-foundation/mpl-toolbox";
 import bs58 from "bs58";
 
 /**
@@ -46,18 +47,21 @@ export interface MintResult {
 }
 
 /**
- * Mint 1 cNFT demo ke wallet user
+ * Mint 1 cNFT demo ke wallet user beserta pembayaran (Solana Pay)
  *
  * @param umi - Instance Umi yang sudah terkoneksi + ada signer (wallet user)
  * @param ownerAddress - Public key penerima cNFT (biasanya = wallet user)
+ * @param priceLamports - Jumlah harga tiket dalam satuan Lamports (1 SOL = 10^9 Lamports)
  * @returns MintResult dengan signature transaksi atau error
  */
 export async function mintDemoTicket(
   umi: Umi,
-  ownerAddress: string
+  ownerAddress: string,
+  priceLamports: number = 0
 ): Promise<MintResult> {
   // Ambil tree address dari environment variable
   const treeAddress = process.env.NEXT_PUBLIC_TREE_ADDRESS;
+  const adminWallet = process.env.NEXT_PUBLIC_ADMIN_WALLET || "H29eqrYPizjEThhpNEp7xMNGt3EoMXwQbLsU2xSTq3Jd"; // Fallback wallet
 
   if (!treeAddress) {
     return {
@@ -68,9 +72,10 @@ export async function mintDemoTicket(
   }
 
   try {
-    console.log("🎫 Mulai minting cNFT...");
-    console.log(`   Owner: ${ownerAddress}`);
-    console.log(`   Tree: ${treeAddress}`);
+    console.log("🎫 Mulai memproses transaksi tiket...");
+    console.log(`   Pembeli: ${ownerAddress}`);
+    console.log(`   Admin: ${adminWallet}`);
+    console.log(`   Harga: ${priceLamports} Lamports`);
 
     // Siapkan metadata dengan creator = identity (wallet user yang connect)
     const metadata = {
@@ -84,19 +89,37 @@ export async function mintDemoTicket(
       ],
     };
 
-    // Kirim transaksi mintV1
-    // mintV1 = instruksi Bubblegum untuk mencetak 1 cNFT ke Merkle Tree
-    const result = await mintV1(umi, {
-      leafOwner: publicKey(ownerAddress),
-      merkleTree: publicKey(treeAddress),
-      metadata,
-    }).sendAndConfirm(umi);
+    // Buat Transaction Builder
+    let builder = transactionBuilder();
+
+    // 1. Tambahkan instruksi pembayaran jika harga > 0
+    if (priceLamports > 0) {
+      builder = builder.add(
+        transferSol(umi, {
+          source: umi.identity,
+          destination: publicKey(adminWallet),
+          amount: sol(priceLamports / 1_000_000_000),
+        })
+      );
+    }
+
+    // 2. Tambahkan instruksi mint cNFT
+    builder = builder.add(
+      mintV1(umi, {
+        leafOwner: publicKey(ownerAddress),
+        merkleTree: publicKey(treeAddress),
+        metadata,
+      })
+    );
+
+    // Kirim gabungan transaksi (Payment + Mint)
+    const result = await builder.sendAndConfirm(umi);
 
     // Konversi signature ke base58 string untuk ditampilkan
     const signatureBytes = result.signature;
     const signatureBase58 = bs58.encode(signatureBytes);
 
-    console.log("✅ cNFT berhasil di-mint!");
+    console.log("✅ Pembayaran dan cNFT berhasil diproses!");
     console.log(`   Signature: ${signatureBase58.slice(0, 30)}...`);
     console.log(
       `   🔗 Explorer: https://explorer.solana.com/tx/${signatureBase58}?cluster=devnet`
@@ -110,14 +133,14 @@ export async function mintDemoTicket(
     const errorMessage =
       error instanceof Error ? error.message : String(error);
 
-    console.error("❌ Minting gagal:", errorMessage);
+    console.error("❌ Transaksi gagal:", errorMessage);
 
     // Berikan pesan error yang user-friendly
     let userMessage = errorMessage;
 
     if (errorMessage.includes("insufficient")) {
       userMessage =
-        "SOL tidak cukup untuk membayar biaya transaksi. Request airdrop dulu di faucet.solana.com";
+        "Saldo SOL tidak cukup untuk membayar tiket dan biaya transaksi. Isi saldo di faucet.solana.com";
     } else if (
       errorMessage.includes("429") ||
       errorMessage.includes("rate")
@@ -125,7 +148,7 @@ export async function mintDemoTicket(
       userMessage =
         "Server Solana sedang sibuk. Tunggu 30 detik lalu coba lagi.";
     } else if (errorMessage.includes("User rejected")) {
-      userMessage = "Transaksi dibatalkan oleh user di wallet.";
+      userMessage = "Transaksi dibatalkan oleh Anda di dompet Phantom.";
     } else if (errorMessage.includes("not connected")) {
       userMessage = "Wallet belum terconnect. Klik Connect Wallet dulu.";
     }
