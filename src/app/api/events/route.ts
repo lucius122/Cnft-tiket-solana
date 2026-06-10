@@ -8,7 +8,7 @@ import { getAllEvents } from "@/lib/events";
 
 export async function GET() {
   try {
-    const events = getAllEvents();
+    const events = await getAllEvents();
     return NextResponse.json({ success: true, data: events });
   } catch (error) {
     console.error("Error fetching events:", error);

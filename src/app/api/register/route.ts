@@ -18,9 +18,9 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const registered = isWalletRegistered(wallet);
+    const registered = await isWalletRegistered(wallet);
     if (registered) {
-      const identity = getIdentityByWallet(wallet);
+      const identity = await getIdentityByWallet(wallet);
       return NextResponse.json({
         success: true,
         registered: true,
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = registerIdentity({
+    const result = await registerIdentity({
       nik: nikClean,
       walletAddress,
       name,

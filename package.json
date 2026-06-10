@@ -23,6 +23,7 @@
     "@solana/wallet-adapter-wallets": "^0.19.38",
     "@solana/web3.js": "^1.98.4",
     "@types/uuid": "^10.0.0",
+    "@vercel/kv": "^3.0.0",
     "bs58": "^6.0.0",
     "dotenv": "^17.4.2",
     "next": "16.2.6",

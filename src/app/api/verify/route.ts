@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Cari tiket berdasarkan nomor
-    const ticket = getTicketByNumber(ticketNumber.toUpperCase());
+    const ticket = await getTicketByNumber(ticketNumber.toUpperCase());
 
     if (!ticket) {
       return NextResponse.json(
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Tandai tiket sebagai sudah digunakan
-    const updated = updateTicketStatus(ticket.id, "redeemed");
+    const updated = await updateTicketStatus(ticket.id, "redeemed");
 
     console.log(`✅ Tiket di-redeem: ${ticketNumber} oleh ${ticket.walletAddress}`);
 
@@ -112,7 +112,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const ticket = getTicketByNumber(ticketNumber.toUpperCase());
+    const ticket = await getTicketByNumber(ticketNumber.toUpperCase());
 
     if (!ticket) {
       return NextResponse.json({ success: true, found: false });

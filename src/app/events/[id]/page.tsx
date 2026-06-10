@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
 import { mintV1 } from "@metaplex-foundation/mpl-bubblegum";
+import type { Collection } from "@metaplex-foundation/mpl-bubblegum";
 import { publicKey, none } from "@metaplex-foundation/umi";
 import WalletButton from "@/components/WalletButton";
 import { createUmiInstance } from "@/lib/umi";
@@ -94,7 +95,7 @@ export default function EventDetailPage() {
           symbol: "TIKET",
           uri: `https://raw.githubusercontent.com/solana-developers/program-examples/main/tokens/tokens/compressed-nfts/uri.json`,
           sellerFeeBasisPoints: 1000, // 10% royalti
-          collection: none(),
+          collection: none<Collection>(),
           creators: [{ address: umi.identity.publicKey, verified: false, share: 100 }],
         },
       }).sendAndConfirm(umi);

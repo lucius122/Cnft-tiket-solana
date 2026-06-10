@@ -1,13 +1,12 @@
 /**
  * events.ts — Helper untuk membaca data event konser
  *
- * KONSEP: Data event disimpan off-chain di file JSON lokal.
- * Di production, ini akan diganti dengan database (PostgreSQL/MongoDB).
- * Untuk demo UTS, JSON sudah cukup untuk menunjukkan konsep.
+ * KONSEP: Data event disimpan di Vercel KV (Redis).
+ * Saat pertama kali diakses, data di-seed dari file statis events.json.
+ * Setelah itu, semua read/write dilakukan via KV.
  */
 
-import * as fs from "fs";
-import * as path from "path";
+import { kvGet, kvSet, seedEventsIfEmpty } from "./storage";
 
 export interface TicketCategory {
   id: string;
@@ -33,32 +32,26 @@ export interface Event {
   status: "on-sale" | "coming-soon" | "sold-out";
 }
 
-const EVENTS_FILE = path.join(process.cwd(), "data", "events.json");
-
-export function getAllEvents(): Event[] {
-  try {
-    const raw = fs.readFileSync(EVENTS_FILE, "utf-8");
-    return JSON.parse(raw) as Event[];
-  } catch {
-    return [];
-  }
+export async function getAllEvents(): Promise<Event[]> {
+  await seedEventsIfEmpty();
+  return kvGet<Event>("events");
 }
 
-export function getEventById(id: string): Event | null {
-  const events = getAllEvents();
+export async function getEventById(id: string): Promise<Event | null> {
+  const events = await getAllEvents();
   return events.find((e) => e.id === id) ?? null;
 }
 
-export function updateEventSoldCount(
+export async function updateEventSoldCount(
   eventId: string,
   categoryId: string,
   delta: number
-): void {
-  const events = getAllEvents();
+): Promise<void> {
+  const events = await getAllEvents();
   const event = events.find((e) => e.id === eventId);
   if (!event) return;
   const cat = event.categories.find((c) => c.id === categoryId);
   if (!cat) return;
   cat.sold = Math.max(0, cat.sold + delta);
-  fs.writeFileSync(EVENTS_FILE, JSON.stringify(events, null, 2));
+  await kvSet("events", events);
 }

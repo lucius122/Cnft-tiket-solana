@@ -1,9 +1,9 @@
 /**
  * tickets.ts — Helper manajemen data tiket
  *
- * KONSEP: Record tiket disimpan off-chain di tickets.json.
+ * KONSEP: Record tiket disimpan di Vercel KV (Redis).
  * Kepemilikan tiket yang SEBENARNYA ada di blockchain (cNFT di Solana).
- * Database lokal ini hanya menyimpan metadata tambahan seperti:
+ * Database KV ini hanya menyimpan metadata tambahan seperti:
  * - Nomor kursi / kategori
  * - Status redeem (apakah sudah dipakai masuk venue)
  * - Link ke transaksi on-chain (signature)
@@ -13,8 +13,7 @@
  * - Status redeem juga di-verify on-chain (burn cNFT)
  */
 
-import * as fs from "fs";
-import * as path from "path";
+import { kvGet, kvSet } from "./storage";
 
 export interface Ticket {
   id: string;            // UUID unik tiket
@@ -33,53 +32,50 @@ export interface Ticket {
   eventTime: string;
 }
 
-const TICKETS_FILE = path.join(process.cwd(), "data", "tickets.json");
-
-export function getAllTickets(): Ticket[] {
-  try {
-    const raw = fs.readFileSync(TICKETS_FILE, "utf-8");
-    return JSON.parse(raw) as Ticket[];
-  } catch {
-    return [];
-  }
+export async function getAllTickets(): Promise<Ticket[]> {
+  return kvGet<Ticket>("tickets");
 }
 
-export function getTicketsByWallet(walletAddress: string): Ticket[] {
-  return getAllTickets().filter((t) => t.walletAddress === walletAddress);
+export async function getTicketsByWallet(walletAddress: string): Promise<Ticket[]> {
+  const all = await getAllTickets();
+  return all.filter((t) => t.walletAddress === walletAddress);
 }
 
-export function getTicketById(id: string): Ticket | null {
-  return getAllTickets().find((t) => t.id === id) ?? null;
+export async function getTicketById(id: string): Promise<Ticket | null> {
+  const all = await getAllTickets();
+  return all.find((t) => t.id === id) ?? null;
 }
 
-export function getTicketByNumber(ticketNumber: string): Ticket | null {
-  return getAllTickets().find((t) => t.ticketNumber === ticketNumber) ?? null;
+export async function getTicketByNumber(ticketNumber: string): Promise<Ticket | null> {
+  const all = await getAllTickets();
+  return all.find((t) => t.ticketNumber === ticketNumber) ?? null;
 }
 
-export function countTicketsByWalletAndEvent(
+export async function countTicketsByWalletAndEvent(
   walletAddress: string,
   eventId: string
-): number {
-  return getAllTickets().filter(
+): Promise<number> {
+  const all = await getAllTickets();
+  return all.filter(
     (t) => t.walletAddress === walletAddress && t.eventId === eventId && t.status !== "cancelled"
   ).length;
 }
 
-export function saveTicket(ticket: Ticket): void {
-  const tickets = getAllTickets();
+export async function saveTicket(ticket: Ticket): Promise<void> {
+  const tickets = await getAllTickets();
   tickets.push(ticket);
-  fs.writeFileSync(TICKETS_FILE, JSON.stringify(tickets, null, 2));
+  await kvSet("tickets", tickets);
 }
 
-export function updateTicketStatus(
+export async function updateTicketStatus(
   ticketId: string,
   status: Ticket["status"]
-): Ticket | null {
-  const tickets = getAllTickets();
+): Promise<Ticket | null> {
+  const tickets = await getAllTickets();
   const idx = tickets.findIndex((t) => t.id === ticketId);
   if (idx === -1) return null;
   tickets[idx].status = status;
-  fs.writeFileSync(TICKETS_FILE, JSON.stringify(tickets, null, 2));
+  await kvSet("tickets", tickets);
   return tickets[idx];
 }
 

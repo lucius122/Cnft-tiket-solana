@@ -34,12 +34,12 @@ export async function GET(req: NextRequest) {
     const wallet = searchParams.get("wallet");
 
     if (wallet) {
-      const tickets = getTicketsByWallet(wallet);
+      const tickets = await getTicketsByWallet(wallet);
       return NextResponse.json({ success: true, data: tickets });
     }
 
     // Tanpa parameter → return semua (untuk dashboard promotor)
-    const tickets = getAllTickets();
+    const tickets = await getAllTickets();
     return NextResponse.json({ success: true, data: tickets });
   } catch (error) {
     console.error("Error fetching tickets:", error);
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Cek wallet sudah registrasi NIK (anti-calo)
-    if (!isWalletRegistered(walletAddress)) {
+    if (!(await isWalletRegistered(walletAddress))) {
       return NextResponse.json(
         { success: false, error: "Wallet belum terdaftar! Daftar NIK kamu terlebih dahulu di halaman Registrasi." },
         { status: 403 }
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Ambil data event
-    const event = getEventById(eventId);
+    const event = await getEventById(eventId);
     if (!event) {
       return NextResponse.json(
         { success: false, error: "Event tidak ditemukan" },
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ANTI-CALO: cek max tiket per wallet per event
-    const existingCount = countTicketsByWalletAndEvent(walletAddress, eventId);
+    const existingCount = await countTicketsByWalletAndEvent(walletAddress, eventId);
     if (existingCount >= event.maxPerWallet) {
       return NextResponse.json(
         {
@@ -137,10 +137,10 @@ export async function POST(req: NextRequest) {
     };
 
     // Simpan tiket
-    saveTicket(ticket);
+    await saveTicket(ticket);
 
     // Update sold count event
-    updateEventSoldCount(eventId, categoryId, 1);
+    await updateEventSoldCount(eventId, categoryId, 1);
 
     console.log(`✅ Tiket baru: ${ticket.ticketNumber} untuk ${walletAddress}`);
 

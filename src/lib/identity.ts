@@ -8,16 +8,14 @@
  * ke 1 wallet. Karena tiket terhubung ke wallet, calo tidak bisa
  * punya banyak wallet yang berbeda untuk 1 orang.
  *
- * Untuk demo: NIK disimpan as-is di JSON (di production harus di-hash/enkripsi!)
- * Di production nyata, verifikasi NIK butuh integrasi dengan Dukcapil.
+ * Privasi: NIK di-hash SHA-256 sebelum disimpan — sistem tidak menyimpan
+ * NIK asli, hanya sidik jari digitalnya.
  *
- * Batasan tambahan:
- * - Max 4 tiket per wallet per event (dikek di tickets.ts)
+ * Data disimpan di Vercel KV (Redis) untuk kompatibilitas dengan hosting.
  */
 
-import * as fs from "fs";
-import * as path from "path";
 import crypto from "crypto";
+import { kvGet, kvSet } from "./storage";
 
 export interface Identity {
   id: string;           // UUID
@@ -28,15 +26,8 @@ export interface Identity {
   registeredAt: string;
 }
 
-const IDENTITY_FILE = path.join(process.cwd(), "data", "identity.json");
-
-export function getAllIdentities(): Identity[] {
-  try {
-    const raw = fs.readFileSync(IDENTITY_FILE, "utf-8");
-    return JSON.parse(raw) as Identity[];
-  } catch {
-    return [];
-  }
+export async function getAllIdentities(): Promise<Identity[]> {
+  return kvGet<Identity>("identities");
 }
 
 /** Hash NIK menggunakan SHA-256 untuk proteksi privasi */
@@ -45,32 +36,35 @@ export function hashNik(nik: string): string {
 }
 
 /** Cek apakah NIK sudah terdaftar (bandingkan hash) */
-export function isNikRegistered(nik: string): boolean {
+export async function isNikRegistered(nik: string): Promise<boolean> {
   const hashed = hashNik(nik);
-  return getAllIdentities().some((i) => i.hashedNik === hashed);
+  const identities = await getAllIdentities();
+  return identities.some((i) => i.hashedNik === hashed);
 }
 
 /** Cek apakah wallet sudah terdaftar */
-export function isWalletRegistered(walletAddress: string): boolean {
-  return getAllIdentities().some((i) => i.walletAddress === walletAddress);
+export async function isWalletRegistered(walletAddress: string): Promise<boolean> {
+  const identities = await getAllIdentities();
+  return identities.some((i) => i.walletAddress === walletAddress);
 }
 
 /** Ambil identitas berdasarkan wallet address */
-export function getIdentityByWallet(walletAddress: string): Identity | null {
-  return getAllIdentities().find((i) => i.walletAddress === walletAddress) ?? null;
+export async function getIdentityByWallet(walletAddress: string): Promise<Identity | null> {
+  const identities = await getAllIdentities();
+  return identities.find((i) => i.walletAddress === walletAddress) ?? null;
 }
 
 /** Daftarkan NIK baru dengan wallet */
-export function registerIdentity(data: {
+export async function registerIdentity(data: {
   nik: string;
   walletAddress: string;
   name: string;
   email: string;
-}): { success: boolean; error?: string; identity?: Identity } {
-  if (isNikRegistered(data.nik)) {
+}): Promise<{ success: boolean; error?: string; identity?: Identity }> {
+  if (await isNikRegistered(data.nik)) {
     return { success: false, error: "NIK ini sudah terdaftar dengan wallet lain." };
   }
-  if (isWalletRegistered(data.walletAddress)) {
+  if (await isWalletRegistered(data.walletAddress)) {
     return { success: false, error: "Wallet ini sudah terdaftar dengan NIK lain." };
   }
 
@@ -83,9 +77,9 @@ export function registerIdentity(data: {
     registeredAt: new Date().toISOString(),
   };
 
-  const identities = getAllIdentities();
+  const identities = await getAllIdentities();
   identities.push(identity);
-  fs.writeFileSync(IDENTITY_FILE, JSON.stringify(identities, null, 2));
+  await kvSet("identities", identities);
 
   return { success: true, identity };
 }
