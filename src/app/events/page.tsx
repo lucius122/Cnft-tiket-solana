@@ -57,7 +57,7 @@ export default function EventsPage() {
           <span className="navbar-brand-icon">🎫</span>
           TiketRantai
         </Link>
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        <div className="navbar-links">
           <Link href="/my-tickets" className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
             Tiket Saya
           </Link>
@@ -82,7 +82,7 @@ export default function EventsPage() {
         </div>
 
         {/* Filter tabs */}
-        <div style={{ display: "flex", gap: "0.75rem", marginBottom: "2rem" }}>
+        <div className="filter-tabs">
           {[
             { key: "all", label: "Semua Event" },
             { key: "on-sale", label: "🔥 On Sale" },
@@ -120,7 +120,7 @@ export default function EventsPage() {
             Tidak ada event yang tersedia
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: "1.5rem" }}>
+          <div className="events-grid">
             {filtered.map((event) => {
               const sold = getTotalSold(event);
               const capacity = getTotalCapacity(event);

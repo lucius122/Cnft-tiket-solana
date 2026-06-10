@@ -652,18 +652,112 @@ body::before {
    RESPONSIVE
    =================================================== */
 
+/* --- Navbar nav links (hidden on mobile, shown via hamburger or stacked) --- */
+.navbar-links {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.navbar-links-nav {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+/* --- How it works step card --- */
+.step-card {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.step-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-card-cta {
+  flex-shrink: 0;
+}
+
+/* --- Event grid --- */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+/* --- Event detail layout --- */
+.event-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* --- Quick actions grid --- */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* --- Stats grid --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* --- Tickets grid --- */
+.tickets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+/* --- Verify form --- */
+.verify-form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* --- Event info sub-grid --- */
+.event-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ======= TABLET (max-width: 768px) ======= */
 @media (max-width: 768px) {
+  /* Navbar */
   .navbar {
     padding: 0.75rem 1rem;
   }
 
+  .navbar-links {
+    gap: 0.5rem;
+  }
+
+  .navbar-links-nav {
+    display: none;
+  }
+
+  /* Hero */
   .hero {
-    padding: 4rem 1.25rem 3rem;
-    min-height: 70vh;
+    padding: 3rem 1.25rem 2.5rem;
+    min-height: auto;
   }
 
   .hero-title {
-    font-size: 2rem;
+    font-size: 1.75rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
   }
 
   .hero-actions {
@@ -676,16 +770,171 @@ body::before {
     justify-content: center;
   }
 
+  /* Features */
   .features-section {
-    padding: 1rem 1.25rem 4rem;
+    padding: 1rem 1.25rem 3rem;
   }
 
+  .features-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Quick actions */
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Step card (how it works) */
+  .step-card {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .step-card-cta {
+    align-self: flex-start;
+  }
+
+  /* Events grid */
+  .events-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Event detail */
+  .event-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .event-info-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Stats */
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Tickets */
+  .tickets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Wallet */
   .wallet-info {
     padding: 0.375rem 0.375rem 0.375rem 0.75rem;
   }
 
   .wallet-address {
     font-size: 0.75rem;
+  }
+
+  /* Cards */
+  .card {
+    padding: 1.25rem;
+    border-radius: 16px;
+  }
+
+  .card-glass {
+    padding: 1.25rem;
+    border-radius: 16px;
+  }
+
+  /* Mint */
+  .mint-container {
+    padding: 2rem 1rem;
+  }
+
+  .mint-card {
+    padding: 1.5rem;
+  }
+
+  /* Filter tabs scroll */
+  .filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+  }
+
+  .filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-tabs button {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Verify form stack on mobile */
+  .verify-form {
+    flex-direction: column;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 1.5rem 1rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* ======= SMALL PHONE (max-width: 480px) ======= */
+@media (max-width: 480px) {
+  .hero {
+    padding: 2.5rem 1rem 2rem;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+  }
+
+  .hero-badge {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  /* Quick actions 2x2 */
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Stats smaller */
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .stat-value,
+  .stats-grid .card div:first-child {
+    font-size: 1.25rem !important;
+  }
+
+  /* Event detail info grid stack */
+  .event-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Navbar brand text hide */
+  .navbar-brand {
+    font-size: 1rem;
+  }
+
+  /* Buttons adjust */
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .wallet-btn-connect {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8rem;
+  }
+
+  /* Page titles */
+  h1 {
+    font-size: 1.5rem !important;
   }
 }
 
@@ -794,19 +1043,4 @@ input[type="email"]::placeholder {
 .stat-label {
   font-size: 0.8rem;
   color: var(--text-muted);
-}
-
-/* Mobile responsive additions */
-@media (max-width: 768px) {
-  .events-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .event-detail-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
 }

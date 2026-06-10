@@ -23,22 +23,24 @@ export default function HomePage() {
           <span className="navbar-brand-icon">🎫</span>
           TiketRantai
         </Link>
-        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-          <Link href="/events" style={{ color: "var(--text-secondary)", fontSize: "0.875rem", textDecoration: "none", padding: "0.4rem 0.75rem", borderRadius: 8, transition: "color 0.2s" }}
-            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--text-primary)")}
-            onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--text-secondary)")}>
-            Events
-          </Link>
-          <Link href="/my-tickets" style={{ color: "var(--text-secondary)", fontSize: "0.875rem", textDecoration: "none", padding: "0.4rem 0.75rem", borderRadius: 8, transition: "color 0.2s" }}
-            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--text-primary)")}
-            onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--text-secondary)")}>
-            My Tickets
-          </Link>
-          <Link href="/register" style={{ color: "var(--text-secondary)", fontSize: "0.875rem", textDecoration: "none", padding: "0.4rem 0.75rem", borderRadius: 8, transition: "color 0.2s" }}
-            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--text-primary)")}
-            onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--text-secondary)")}>
-            Registrasi
-          </Link>
+        <div className="navbar-links">
+          <div className="navbar-links-nav">
+            <Link href="/events" style={{ color: "var(--text-secondary)", fontSize: "0.875rem", textDecoration: "none", padding: "0.4rem 0.75rem", borderRadius: 8, transition: "color 0.2s" }}
+              onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--text-primary)")}
+              onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--text-secondary)")}>
+              Events
+            </Link>
+            <Link href="/my-tickets" style={{ color: "var(--text-secondary)", fontSize: "0.875rem", textDecoration: "none", padding: "0.4rem 0.75rem", borderRadius: 8, transition: "color 0.2s" }}
+              onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--text-primary)")}
+              onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--text-secondary)")}>
+              My Tickets
+            </Link>
+            <Link href="/register" style={{ color: "var(--text-secondary)", fontSize: "0.875rem", textDecoration: "none", padding: "0.4rem 0.75rem", borderRadius: 8, transition: "color 0.2s" }}
+              onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--text-primary)")}
+              onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--text-secondary)")}>
+              Registrasi
+            </Link>
+          </div>
           <WalletButton />
         </div>
       </nav>
@@ -84,7 +86,7 @@ export default function HomePage() {
 
       {/* QUICK ACTIONS */}
       <section style={{ position: "relative", zIndex: 1, maxWidth: 1000, margin: "0 auto", padding: "0 2rem 3rem" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+        <div className="quick-actions-grid">
           {[
             { href: "/events", icon: "🎵", label: "Browse Events", desc: "Lihat semua konser tersedia", color: "var(--primary-400)" },
             { href: "/register", icon: "🪪", label: "Daftar NIK", desc: "Verifikasi identitasmu", color: "var(--accent-400)" },
@@ -208,7 +210,7 @@ export default function HomePage() {
             { step: "03", title: "Tiket cNFT di Wallet", desc: "Tiketmu langsung muncul sebagai cNFT di Phantom. Buka 'My Tickets' untuk QR code.", href: "/my-tickets", cta: "My Tickets" },
             { step: "04", title: "Scan di Venue", desc: "Tunjukkan QR code ke panitia. Tiket diverifikasi on-chain dan ditandai terpakai.", href: "/verify", cta: "Mode Panitia" },
           ].map((item) => (
-            <div key={item.step} className="card" style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start" }}>
+            <div key={item.step} className="card step-card">
               <div style={{
                 minWidth: 48, height: 48, borderRadius: 14,
                 background: "linear-gradient(135deg, var(--primary-700), var(--primary-900))",
@@ -218,11 +220,11 @@ export default function HomePage() {
               }}>
                 {item.step}
               </div>
-              <div style={{ flex: 1 }}>
+              <div className="step-card-content">
                 <h3 style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "0.35rem" }}>{item.title}</h3>
                 <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>{item.desc}</p>
               </div>
-              <Link href={item.href} className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.8rem", flexShrink: 0 }}>
+              <Link href={item.href} className="btn btn-secondary step-card-cta" style={{ padding: "0.5rem 1rem", fontSize: "0.8rem" }}>
                 {item.cta}
               </Link>
             </div>
