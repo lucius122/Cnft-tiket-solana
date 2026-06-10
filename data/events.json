@@ -48,7 +48,8 @@
       "Rock",
       "International"
     ],
-    "status": "on-sale"
+    "status": "on-sale",
+    "promoterWallet": "BRjpCHtyQLSeX1fNNt3WgE8iNfEpS2GqiMZm9EUSmJCH"
   },
   {
     "id": "dewa19-reunion-2026",
@@ -91,7 +92,8 @@
       "Pop",
       "Lokal"
     ],
-    "status": "on-sale"
+    "status": "on-sale",
+    "promoterWallet": "BRjpCHtyQLSeX1fNNt3WgE8iNfEpS2GqiMZm9EUSmJCH"
   },
   {
     "id": "blackpink-world-tour",
@@ -133,6 +135,7 @@
       "K-Pop",
       "International"
     ],
-    "status": "coming-soon"
+    "status": "coming-soon",
+    "promoterWallet": "BRjpCHtyQLSeX1fNNt3WgE8iNfEpS2GqiMZm9EUSmJCH"
   }
 ]

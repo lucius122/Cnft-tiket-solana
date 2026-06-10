@@ -30,6 +30,7 @@ export interface Event {
   maxPerWallet: number;
   tags: string[];
   status: "on-sale" | "coming-soon" | "sold-out";
+  promoterWallet?: string; // Wallet promotor untuk menerima royalti resale
 }
 
 export async function getAllEvents(): Promise<Event[]> {

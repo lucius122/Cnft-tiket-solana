@@ -284,7 +284,16 @@ export default function MyTicketsPage() {
       )}
 
       {/* Sell Modal */}
-      {sellModalTicket && (
+      {sellModalTicket && (() => {
+        const maxPrice = Math.floor(sellModalTicket.price * 1.10);
+        const parsedPrice = parseInt(sellPrice.replace(/\D/g, ""), 10) || 0;
+        const isOverCap = parsedPrice > maxPrice;
+        const sellerGets = Math.floor(parsedPrice * 0.87);
+        const promoterGets = Math.floor(parsedPrice * 0.10);
+        const platformGets = Math.floor(parsedPrice * 0.03);
+        const fmtIDR = (n: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
+
+        return (
         <div
           onClick={() => setSellModalTicket(null)}
           style={{
@@ -298,31 +307,73 @@ export default function MyTicketsPage() {
           <div
             onClick={(e) => e.stopPropagation()}
             className="card-glass"
-            style={{ maxWidth: 400, width: "100%", padding: "2rem" }}
+            style={{ maxWidth: 420, width: "100%", padding: "2rem" }}
           >
             <h2 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "0.5rem", textAlign: "center" }}>
               Jual Tiket
             </h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: "1.5rem", textAlign: "center", lineHeight: 1.5 }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: "1rem", textAlign: "center", lineHeight: 1.5 }}>
               Tiket <strong>{sellModalTicket.eventTitle}</strong> ({sellModalTicket.categoryName}) akan dilisting di Marketplace.
             </p>
 
+            {/* Info aturan */}
+            <div style={{
+              background: "rgba(139,92,246,0.08)", border: "1px solid rgba(139,92,246,0.2)",
+              borderRadius: 8, padding: "0.75rem", marginBottom: "1.25rem",
+              fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.6,
+            }}>
+              📋 <strong>Aturan Resale:</strong><br/>
+              • Harga asli: <strong>{fmtIDR(sellModalTicket.price)}</strong><br/>
+              • Harga maks (110%): <strong style={{ color: "var(--warning)" }}>{fmtIDR(maxPrice)}</strong><br/>
+              • Bagi hasil: 87% penjual · 10% promotor · 3% platform
+            </div>
+
             <form onSubmit={handleSellTicket}>
-              <div style={{ marginBottom: "1.5rem" }}>
+              <div style={{ marginBottom: "1rem" }}>
                 <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "0.5rem" }}>Harga Jual (IDR)</label>
                 <input
                   type="text"
                   required
-                  placeholder="Contoh: 1500000"
+                  placeholder={`Maks: ${maxPrice}`}
                   value={sellPrice}
                   onChange={(e) => setSellPrice(e.target.value)}
                   style={{
                     width: "100%", padding: "0.75rem 1rem", borderRadius: 8,
-                    background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)",
-                    color: "white", outline: "none", fontSize: "1rem"
+                    background: "var(--bg-secondary)",
+                    border: `1px solid ${isOverCap ? "var(--error)" : "var(--border-subtle)"}`,
+                    color: "white", outline: "none", fontSize: "1rem",
                   }}
                 />
+                {isOverCap && (
+                  <p style={{ color: "var(--error)", fontSize: "0.75rem", marginTop: "0.4rem" }}>
+                    ⚠️ Harga melebihi batas 110%! Maks: {fmtIDR(maxPrice)}
+                  </p>
+                )}
               </div>
+
+              {/* Preview bagi hasil */}
+              {parsedPrice > 0 && !isOverCap && (
+                <div style={{
+                  background: "rgba(0,0,0,0.2)", borderRadius: 8,
+                  padding: "0.75rem", marginBottom: "1.25rem",
+                  fontSize: "0.78rem", color: "var(--text-secondary)",
+                }}>
+                  <div style={{ fontWeight: 700, marginBottom: "0.4rem" }}>💰 Estimasi yang kamu terima:</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "0.2rem 0" }}>
+                    <span>👤 Kamu (87%)</span>
+                    <span style={{ fontWeight: 700, color: "var(--success)" }}>{fmtIDR(sellerGets)}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "0.2rem 0" }}>
+                    <span>🎤 Promotor (10%)</span>
+                    <span>{fmtIDR(promoterGets)}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "0.2rem 0" }}>
+                    <span>🏢 Platform (3%)</span>
+                    <span>{fmtIDR(platformGets)}</span>
+                  </div>
+                </div>
+              )}
+
               <div style={{ display: "flex", gap: "1rem" }}>
                 <button
                   type="button"
@@ -334,7 +385,7 @@ export default function MyTicketsPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={selling || !sellPrice}
+                  disabled={selling || !sellPrice || isOverCap}
                   className={`btn btn-accent ${selling ? "btn-loading" : ""}`}
                   style={{ flex: 1, justifyContent: "center" }}
                 >
@@ -344,7 +395,8 @@ export default function MyTicketsPage() {
             </form>
           </div>
         </div>
-      )}
+        );
+      })()}
 
       <footer className="footer">
         <p>TiketRantai — cNFT Concert Ticketing · Solana Devnet</p>
