@@ -170,7 +170,7 @@ export default function EventDetailPage() {
           <span className="navbar-brand-icon">🎫</span>
           TiketRantai
         </Link>
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        <div className="navbar-links">
           <Link href="/events" style={{ color: "var(--text-secondary)", fontSize: "0.875rem", textDecoration: "none" }}>
             ← Events
           </Link>
@@ -179,7 +179,7 @@ export default function EventDetailPage() {
       </nav>
 
       <main style={{ position: "relative", zIndex: 1, maxWidth: 1000, margin: "0 auto", padding: "3rem 2rem" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: "2rem", alignItems: "start" }}>
+        <div className="event-detail-grid">
           {/* Left: Event Info */}
           <div>
             {/* Event header */}
@@ -202,7 +202,7 @@ export default function EventDetailPage() {
               <p style={{ fontSize: "1rem", color: "var(--accent-400)", fontWeight: 600, marginBottom: "1.5rem" }}>
                 {event.artist}
               </p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div className="event-info-grid">
                 <div>
                   <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>📅 Tanggal</div>
                   <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>{formatDate(event.date)}</div>

@@ -723,6 +723,13 @@ body::before {
   gap: 0.75rem;
 }
 
+/* --- Filter tabs --- */
+.filter-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
 /* --- Event info sub-grid --- */
 .event-info-grid {
   display: grid;

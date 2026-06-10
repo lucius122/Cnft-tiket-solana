@@ -79,7 +79,7 @@ export default function RegisterPage() {
           <span className="navbar-brand-icon">🎫</span>
           TiketRantai
         </Link>
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        <div className="navbar-links">
           <Link href="/events" className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
             Events
           </Link>

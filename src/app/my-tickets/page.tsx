@@ -45,7 +45,7 @@ export default function MyTicketsPage() {
           <span className="navbar-brand-icon">🎫</span>
           TiketRantai
         </Link>
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        <div className="navbar-links">
           <Link href="/events" className="btn btn-secondary" style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
             Events
           </Link>
@@ -101,7 +101,7 @@ export default function MyTicketsPage() {
         {wallet.connected && !loading && tickets.length > 0 && (
           <>
             {/* Stats */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
+            <div className="stats-grid" style={{ marginBottom: "2rem" }}>
               {[
                 { label: "Total Tiket", value: tickets.length, color: "var(--primary-400)" },
                 { label: "Aktif", value: activeTickets.length, color: "var(--success)" },
@@ -124,7 +124,7 @@ export default function MyTicketsPage() {
                 <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--success)", marginBottom: "1rem" }}>
                   ✅ Tiket Aktif ({activeTickets.length})
                 </h2>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
+                <div className="tickets-grid" style={{ marginBottom: "2rem" }}>
                   {activeTickets.map((ticket) => (
                     <TicketCard key={ticket.id} ticket={ticket} onShowQR={() => setSelectedTicket(ticket)} />
                   ))}
@@ -138,7 +138,7 @@ export default function MyTicketsPage() {
                 <h2 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-muted)", marginBottom: "1rem" }}>
                   ⬜ Tiket Sudah Dipakai ({usedTickets.length})
                 </h2>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
+                <div className="tickets-grid">
                   {usedTickets.map((ticket) => (
                     <TicketCard key={ticket.id} ticket={ticket} dimmed />
                   ))}

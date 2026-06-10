@@ -109,7 +109,7 @@ export default function VerifyPage() {
           <h2 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "1.25rem" }}>
             🔍 Input Nomor Tiket
           </h2>
-          <form onSubmit={handleVerify} style={{ display: "flex", gap: "0.75rem" }}>
+          <form onSubmit={handleVerify} className="verify-form">
             <input
               ref={inputRef}
               type="text"
