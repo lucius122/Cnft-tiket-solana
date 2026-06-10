@@ -19,7 +19,7 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useEffect, useState, useCallback } from "react";
 
 export default function WalletButton() {
-  const { publicKey, disconnect, connected } = useWallet();
+  const { publicKey, disconnect, connected, wallet, connect } = useWallet();
   const { connection } = useConnection();
   const { setVisible } = useWalletModal();
 
@@ -64,8 +64,16 @@ export default function WalletButton() {
   if (!connected || !publicKey) {
     return (
       <button
-        id="connect-wallet-btn"
-        onClick={() => setVisible(true)}
+        onClick={() => {
+          if (wallet) {
+            // Jika user sebelumnya sudah memilih wallet tapi pop-up kepencet hilang/dicancel,
+            // langsung panggil pop-up nya lagi tanpa buka modal
+            connect().catch((error) => console.log("Gagal connect:", error));
+          } else {
+            // Jika belum ada wallet yang dipilih sama sekali, buka modal
+            setVisible(true);
+          }
+        }}
         className="wallet-btn wallet-btn-connect"
       >
         <svg
@@ -100,7 +108,6 @@ export default function WalletButton() {
         )}
       </div>
       <button
-        id="disconnect-wallet-btn"
         onClick={() => disconnect()}
         className="wallet-btn wallet-btn-disconnect"
         title="Disconnect wallet"

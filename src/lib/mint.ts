@@ -19,7 +19,9 @@
 
 import { mintV1 } from "@metaplex-foundation/mpl-bubblegum";
 import { none, publicKey } from "@metaplex-foundation/umi";
-import type { Umi } from "@metaplex-foundation/umi";
+import type { Option, Umi } from "@metaplex-foundation/umi";
+import type { Collection } from "@metaplex-foundation/mpl-bubblegum";
+import bs58 from "bs58";
 
 /**
  * Metadata untuk tiket demo
@@ -33,7 +35,7 @@ const DEMO_TICKET_METADATA = {
   // Untuk demo, kita pakai placeholder — nanti diganti di Fase 2
   uri: "https://raw.githubusercontent.com/solana-developers/program-examples/main/tokens/tokens/compressed-nfts/uri.json",
   sellerFeeBasisPoints: 500, // 5% royalty
-  collection: none(), // Belum pakai collection — ditambahkan di Fase 2
+  collection: none<Collection>(), // Belum pakai collection — ditambahkan di Fase 2
   creators: [] as { address: ReturnType<typeof publicKey>; verified: boolean; share: number }[],
 };
 
@@ -92,17 +94,17 @@ export async function mintDemoTicket(
 
     // Konversi signature ke base58 string untuk ditampilkan
     const signatureBytes = result.signature;
-    const signatureBase64 = Buffer.from(signatureBytes).toString("base64");
+    const signatureBase58 = bs58.encode(signatureBytes);
 
     console.log("✅ cNFT berhasil di-mint!");
-    console.log(`   Signature: ${signatureBase64.slice(0, 30)}...`);
+    console.log(`   Signature: ${signatureBase58.slice(0, 30)}...`);
     console.log(
-      `   🔗 Explorer: https://explorer.solana.com/tx/${signatureBase64}?cluster=devnet`
+      `   🔗 Explorer: https://explorer.solana.com/tx/${signatureBase58}?cluster=devnet`
     );
 
     return {
       success: true,
-      signature: signatureBase64,
+      signature: signatureBase58,
     };
   } catch (error: unknown) {
     const errorMessage =

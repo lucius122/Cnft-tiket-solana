@@ -9,13 +9,45 @@
     "description": "Konser spektakuler Coldplay di Jakarta dengan stage production terbesar sepanjang sejarah. Pengalaman visual dan audio yang tak terlupakan dengan light show canggih dan konfeti ramah lingkungan.",
     "posterUrl": "/events/coldplay.jpg",
     "categories": [
-      { "id": "vip", "name": "VIP Golden Circle", "price": 2500000, "capacity": 500, "sold": 312, "color": "#f59e0b" },
-      { "id": "festival", "name": "Festival", "price": 1500000, "capacity": 3000, "sold": 1841, "color": "#8b5cf6" },
-      { "id": "tribune", "name": "Tribune A", "price": 850000, "capacity": 5000, "sold": 2103, "color": "#06b6d4" },
-      { "id": "tribune-b", "name": "Tribune B", "price": 600000, "capacity": 8000, "sold": 3892, "color": "#10b981" }
+      {
+        "id": "vip",
+        "name": "VIP Golden Circle",
+        "price": 2500000,
+        "capacity": 500,
+        "sold": 314,
+        "color": "#f59e0b"
+      },
+      {
+        "id": "festival",
+        "name": "Festival",
+        "price": 1500000,
+        "capacity": 3000,
+        "sold": 1841,
+        "color": "#8b5cf6"
+      },
+      {
+        "id": "tribune",
+        "name": "Tribune A",
+        "price": 850000,
+        "capacity": 5000,
+        "sold": 2103,
+        "color": "#06b6d4"
+      },
+      {
+        "id": "tribune-b",
+        "name": "Tribune B",
+        "price": 600000,
+        "capacity": 8000,
+        "sold": 3892,
+        "color": "#10b981"
+      }
     ],
     "maxPerWallet": 4,
-    "tags": ["Pop", "Rock", "International"],
+    "tags": [
+      "Pop",
+      "Rock",
+      "International"
+    ],
     "status": "on-sale"
   },
   {
@@ -28,12 +60,37 @@
     "description": "Reuni legendaris Dewa 19 dengan formasi lengkap. Nostalgia lagu-lagu ikonik era 90an yang sudah dinantikan jutaan penggemar selama bertahun-tahun.",
     "posterUrl": "/events/dewa19.jpg",
     "categories": [
-      { "id": "platinum", "name": "Platinum", "price": 1800000, "capacity": 400, "sold": 398, "color": "#a78bfa" },
-      { "id": "gold", "name": "Gold", "price": 1200000, "capacity": 1500, "sold": 1100, "color": "#f59e0b" },
-      { "id": "silver", "name": "Silver", "price": 750000, "capacity": 4000, "sold": 2200, "color": "#94a3b8" }
+      {
+        "id": "platinum",
+        "name": "Platinum",
+        "price": 1800000,
+        "capacity": 400,
+        "sold": 398,
+        "color": "#a78bfa"
+      },
+      {
+        "id": "gold",
+        "name": "Gold",
+        "price": 1200000,
+        "capacity": 1500,
+        "sold": 1100,
+        "color": "#f59e0b"
+      },
+      {
+        "id": "silver",
+        "name": "Silver",
+        "price": 750000,
+        "capacity": 4000,
+        "sold": 2200,
+        "color": "#94a3b8"
+      }
     ],
     "maxPerWallet": 4,
-    "tags": ["Rock", "Pop", "Lokal"],
+    "tags": [
+      "Rock",
+      "Pop",
+      "Lokal"
+    ],
     "status": "on-sale"
   },
   {
@@ -46,12 +103,36 @@
     "description": "World tour grup K-Pop global terbesar. BLACKPINK hadir dengan setlist terbaru dan production show kelas dunia yang memukau.",
     "posterUrl": "/events/blackpink.jpg",
     "categories": [
-      { "id": "pit", "name": "Pit (Standing)", "price": 2000000, "capacity": 800, "sold": 0, "color": "#f43f5e" },
-      { "id": "seated-a", "name": "Seated A", "price": 1400000, "capacity": 2000, "sold": 0, "color": "#8b5cf6" },
-      { "id": "seated-b", "name": "Seated B", "price": 900000, "capacity": 5000, "sold": 0, "color": "#06b6d4" }
+      {
+        "id": "pit",
+        "name": "Pit (Standing)",
+        "price": 2000000,
+        "capacity": 800,
+        "sold": 0,
+        "color": "#f43f5e"
+      },
+      {
+        "id": "seated-a",
+        "name": "Seated A",
+        "price": 1400000,
+        "capacity": 2000,
+        "sold": 0,
+        "color": "#8b5cf6"
+      },
+      {
+        "id": "seated-b",
+        "name": "Seated B",
+        "price": 900000,
+        "capacity": 5000,
+        "sold": 0,
+        "color": "#06b6d4"
+      }
     ],
     "maxPerWallet": 4,
-    "tags": ["K-Pop", "International"],
+    "tags": [
+      "K-Pop",
+      "International"
+    ],
     "status": "coming-soon"
   }
 ]

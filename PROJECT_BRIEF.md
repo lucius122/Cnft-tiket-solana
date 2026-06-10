@@ -13,9 +13,12 @@ Proyek ini adalah sistem e-ticketing konser berbasis Compressed NFT (cNFT) di So
 Goal utama: demo UTS yang berjalan di laptop, bukan production.
 
 ### Status Fase Saat Ini
-- **Fase 0:** ✅ Environment setup (partial — Next.js project sudah ada, dependencies sudah install)
-- **Fase 1:** 🔄 Dalam pengerjaan — connect wallet + mint 1 cNFT test
-- **Fase 2-4:** ⬜ Belum dimulai
+- **Fase 0:** ✅ Environment setup — Node v22, Solana CLI v3.1.9, keypair ada. **PERLU: airdrop SOL + jalankan create-tree.ts**
+- **Fase 1:** ✅ Landing page, halaman mint, komponen wallet — semua kode sudah ada. **PERLU: Merkle Tree address di .env.local**
+- **Fase 2:** ✅ Kode selesai — Events catalog, event detail + buy, my-tickets + QR, API routes
+- **Fase 3:** ✅ Kode selesai — Register NIK, verify/scan, anti-calo logic di API
+- **Fase 4:** ⬜ Belum dimulai (dashboard promotor)
+
 
 ### File Penting
 - `src/app/page.tsx` — Landing page

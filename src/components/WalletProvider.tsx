@@ -52,7 +52,7 @@ export default function WalletProvider({ children }: Props) {
     // Layer 1: Koneksi ke jaringan Solana
     <ConnectionProvider endpoint={endpoint}>
       {/* Layer 2: Manajemen wallet */}
-      <SolanaWalletProvider wallets={wallets} autoConnect>
+      <SolanaWalletProvider wallets={wallets} autoConnect={false}>
         {/* Layer 3: UI modal untuk pilih/connect wallet */}
         <WalletModalProvider>{children}</WalletModalProvider>
       </SolanaWalletProvider>

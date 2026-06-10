@@ -21,6 +21,7 @@ import { publicKey, none } from "@metaplex-foundation/umi";
 import WalletButton from "@/components/WalletButton";
 import { createUmiInstance } from "@/lib/umi";
 import type { Event } from "@/lib/events";
+import bs58 from "bs58";
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -81,11 +82,15 @@ export default function EventDetailPage() {
 
       // STEP 1: Mint cNFT via Umi + Phantom
       console.log("🎫 Minting cNFT tiket...");
+      // Nama cNFT dibatasi max 32 karakter oleh Bubblegum program
+      // Kita pakai format singkat: "TKT-{artist}-{category}" lalu potong jika perlu
+      const shortName = `TKT-${event.artist}-${category.id}`.slice(0, 32);
+
       const result = await mintV1(umi, {
         leafOwner: publicKey(wallet.publicKey.toBase58()),
         merkleTree: publicKey(treeAddress),
         metadata: {
-          name: `Tiket ${event.title} — ${category.name}`,
+          name: shortName,
           symbol: "TIKET",
           uri: `https://raw.githubusercontent.com/solana-developers/program-examples/main/tokens/tokens/compressed-nfts/uri.json`,
           sellerFeeBasisPoints: 1000, // 10% royalti
@@ -94,7 +99,7 @@ export default function EventDetailPage() {
         },
       }).sendAndConfirm(umi);
 
-      const sig = Buffer.from(result.signature).toString("base64");
+      const sig = bs58.encode(result.signature);
       setTxSignature(sig);
       console.log("✅ cNFT berhasil di-mint! Signature:", sig.slice(0, 20) + "...");
 

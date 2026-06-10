@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "a317152e-4d3b-4f02-8edc-1c67dcfd46ac",
+    "eventId": "coldplay-jakarta-2026",
+    "eventTitle": "Coldplay: Music of the Spheres",
+    "categoryId": "vip",
+    "categoryName": "VIP Golden Circle",
+    "walletAddress": "GdgBx2hkQ6TbVywHVJkrJEF28ba4EF51ZHNShLuM8fcq",
+    "price": 2500000,
+    "mintSignature": "3V1yzqKQgrc9zuFqiKP8MSqzTz4r2S8n1WKnx27BNPSYNrWbHCSdQbXobDThdNKr1wsBzgYr8Z69ppZMVvrFQord",
+    "mintedAt": "2026-06-04T05:52:16.737Z",
+    "status": "active",
+    "ticketNumber": "COLD-UNK6VZVL",
+    "venue": "Gelora Bung Karno, Jakarta",
+    "eventDate": "2026-08-15",
+    "eventTime": "19:00"
+  }
+]
